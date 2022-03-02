@@ -5,6 +5,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\Controller;
 
 /*
 
@@ -37,6 +38,7 @@ Route::get('/', function () {
 
 
 Route::get('/search', SearchController::class);
+Route::get('test/{term}', [Controller::class, 'test']);
 
 
 

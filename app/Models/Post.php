@@ -28,7 +28,8 @@ class Post extends Model
 
     protected $table = 'posts' ;
 
-    protected $fillable = ['title','body','category_id','user_id'];
+    protected $fillable = ['id','title','body','category_id']; //no type filtrable if exist ok
+    
 
 
 

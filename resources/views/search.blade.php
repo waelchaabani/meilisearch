@@ -12,7 +12,7 @@
                     <form action="/search" method="get" class="space-y-4 mb-6 flex items-baseline">
                     @csrf
                             <select name="category_id" id="category_id">
-                            
+                            <option value="">Any Category</option>
                             @foreach( $categories as $category)
                             <option value="{{ $category->id }}" {{ request()->get('category_id') === $category->id ? 'selected=""' : '' }}>
                                 {{$category->name}} 

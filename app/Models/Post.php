@@ -31,7 +31,11 @@ class Post extends Model
     protected $fillable = ['id','title','body','category_id']; //no type filtrable if exist ok
     
 
-
+public function toSearchableArray(){
+    $array = $this->toArray();
+    $array['category_id'] = $this->category_id;
+    return $array;
+}
 
 
     

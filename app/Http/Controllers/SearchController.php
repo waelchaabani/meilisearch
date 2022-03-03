@@ -1,78 +1,116 @@
 <?php
-
-
-
 namespace App\Http\Controllers;
-
-
-
 use App\Models\Post;
-
 use App\Models\Category;
-
-
-
 use Illuminate\Http\Request;
 
-
+use DB;
 
 class SearchController extends Controller
-
 {
-
-   
-
     public function __invoke(Request $request)
+                {
+                    // $results = null ;
+                    $categories = Category::get() ;
+                    $query = $request->get('query');
+                    $results =  Post::search($request->input('query'))->get();
+                    if(!empty($query)) {
+                        $variable = $request->query('query');
+                        //var_dump($variable);exit();
+                    // return $results->where('category_id',$request->get('category_id'));
+                    if($categoryId = $request->get('category_id')){
+                        $results = Post::search($query, function ( $meilisearch, $query,$options) use ($request) {
+                    if($categoryId = $request->get('category_id')) {
+                        // return $results->where('category_id',$categoryId);
+                        $options['filter'] =['category_id='.$categoryId];
+                        //dd($options);                   
+                            return $meilisearch->search($query,$options);
+                        }
+                    })->paginate(1);
+                     }else{
+                        $results = Post::search($variable)->paginate(10);
+                         }
+                    } else {
+                        $categoryId = $request->get('category_id');
+                        $results = Post::when($categoryId,function($posts) use($categoryId){
+                            $posts->where('category_id',$categoryId);
+                        })->paginate(10);
+                    }
+                    return view('search' , [
 
-    {
+                        'results' => $results,
 
-        // $results = null ;
+                        'categories' => $categories,
+                        'categoryId' =>  $request->get('category_id')
+                    ]);
+                 }
+                 public function DeletePost($id){   
+                        $post = Post::find($id);
+                        $post->delete();
+                
+                        $notification = array(
+                            'message' => 'User Deleted Successfully',
+                            'alert-type' => 'info'
+                        );
+                
+                        return Redirect()->back()->with($notification);
 
-        $categories = Category::get() ;
-
-        $query = $request->get('query');
-        $results =  Post::search($request->input('query'))->get();
-       
-        if(!empty($query)) {
-            $variable = $request->query('query');
-            //var_dump($variable);exit();
-
-            $results = Post::search($query, function ( $meilisearch, $query,$options) use ($request) {
-           // $options['category_id=20'];
-            if($categoryId = $request->get('category_id')) {
-                   
-                    $options['filter'] ='category_id='.$categoryId;
-
-//dd($options);                   
-                    //the all error is from filters, yes... why filters ? 
-                    return $meilisearch->search($query,$options);
-                }
-            })->get();
-
-            
-            $results = Post::search($variable)->get();
-           // dd($results);
-            //var_dump($results);exit();
-            // you need to do something like this
-            // return view('search', compact('results')); 
-       
-            //$results = collect();
-            //it return just the else
-
-        } else {
-            $results = Post::get();
-        }
+                    }
 
 
+                    public function PostEdit($id){
+                        $editData = Post::find($id);
+                        return view('post.editPost',compact('editData'));
+                
+                    }
+                    public function PostUpdate(Request $request, $id){
 
-        return view('search' , [
+                        $data = Post::find($id);
+                        $data->title = $request->title;
+                        $data->body = $request->body;
+                        $data->category_id = $request->category_id;
+                        $data->save();
+                
+                        $notification = array(
+                            'message' => 'User Updated Successfully',
+                            'alert-type' => 'info'
+                        );
+                
+                        return Redirect()->back()->with($notification);
+                
+                    }
 
-            'results' => $results,
 
-            'categories' => $categories
 
-        ]);
 
-    }
 
+
+                    public function PostView($id){
+                        $editData = Post::find($id);
+                        return view('post.viewPost',compact('editData'));
+                
+                    }
+                
+
+                    public function PostAdd(Request $request){
+                        $validatedData = $request->validate([
+                            'title' => 'required|min:6',
+                            'body' => 'required|min:8',
+                            'category_id' => 'required',
+                        ]);
+                        $data = new Post();
+                        $data->title = $request->title;
+                        $data->body = $request->body;
+                        $data->category_id = $request->category_id;
+                        $data->save();
+                        $notification = array(
+                            'message' => 'User Updated Successfully',
+                            'alert-type' => 'info'
+                        );
+                
+                        return Redirect()->back()->with($notification);
+                
+                    }
+                
+              
 }

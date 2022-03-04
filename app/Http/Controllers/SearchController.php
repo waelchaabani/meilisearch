@@ -57,14 +57,12 @@ class SearchController extends Controller
 
                     }
 
-
                     public function PostEdit($id){
                         $editData = Post::find($id);
-                        return view('post.editPost',compact('editData'));
-                
+                        return view('post.editPost',compact('editData'));                
                     }
-                    public function PostUpdate(Request $request, $id){
 
+                    public function PostUpdate(Request $request, $id){
                         $data = Post::find($id);
                         $data->title = $request->title;
                         $data->body = $request->body;
@@ -80,18 +78,12 @@ class SearchController extends Controller
                 
                     }
 
-
-
-
-
-
                     public function PostView($id){
                         $editData = Post::find($id);
                         return view('post.viewPost',compact('editData'));
                 
                     }
                 
-
                     public function PostAdd(Request $request){
                         $validatedData = $request->validate([
                             'title' => 'required|min:6',

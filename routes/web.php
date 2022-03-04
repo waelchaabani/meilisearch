@@ -11,6 +11,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
 
 
+use App\Http\Livewire\Post;
+use App\Http\Livewire\Search;
+
+
+
+
 
 
 
@@ -46,6 +52,17 @@ Route::get('/', function () {
 
 Route::get('/search', SearchController::class);
 Route::get('test/{term}', [Controller::class, 'test']);
+Route::get('/contact', post::class);
+
+
+Route::get('/search/Post',Search ::class,'searchPost');
+
+
+
+
+
+Route::post('/contact/add', post::class,'savePost');
+
 
 
 
